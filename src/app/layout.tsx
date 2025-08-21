@@ -4,6 +4,8 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Navigation } from "@/components/navigation";
 import { ThemeProvider } from "@/components/theme-provider";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import { AppSidebar } from "@/components/app-sidebar"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,8 +39,14 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <Navigation />
-            {children}
+            <SidebarProvider>
+            <AppSidebar />
+            <main>
+              <SidebarTrigger />
+              {/* <Navigation /> */}
+              {children}
+            </main>
+          </SidebarProvider>
           </ThemeProvider>
       </body>
     </html>
