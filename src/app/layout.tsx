@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
-import { Navigation } from "@/components/navigation";
+// import { Navigation } from "@/components/navigation";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
@@ -41,10 +41,18 @@ export default function RootLayout({
           >
             <SidebarProvider>
             <AppSidebar />
-            <main>
-              <SidebarTrigger />
-              {/* <Navigation /> */}
-              {children}
+
+            <main
+              className="flex-1 transition-all"
+              data-state-opened-sidebar
+            >
+              <div className="p-2 border-b">
+                <SidebarTrigger />
+              </div>
+
+              <div className="p-6">
+                {children}
+              </div>
             </main>
           </SidebarProvider>
           </ThemeProvider>
