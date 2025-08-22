@@ -1,5 +1,5 @@
 import { clerkClient } from "@clerk/nextjs/server";
-import { removeRole, setRole } from "./actions";
+import { removeRole, setRole, deleteUser } from "./actions";
 import {
   Table,
   TableBody,
@@ -55,12 +55,22 @@ export default async function Admin() {
                 </form>
                 <form action={setRole} className="inline">
                   <input type="hidden" value={user.id} name="id" />
-                  <input type="hidden" value="moderator" name="role" />
+                  <input type="hidden" value="creator" name="role" />
                   <button
                     type="submit"
                     className="px-2 py-1 text-sm border border-neutral-300 dark:border-neutral-600 dark:text-neutral-200 dark:hover:bg-neutral-700"
                   >
-                    Make Moderator
+                    Make Creator
+                  </button>
+                </form>
+                <form action={setRole} className="inline">
+                  <input type="hidden" value={user.id} name="id" />
+                  <input type="hidden" value="write-access" name="role" />
+                  <button
+                    type="submit"
+                    className="px-2 py-1 text-sm border border-neutral-300 dark:border-neutral-600 dark:text-neutral-200 dark:hover:bg-neutral-700"
+                  >
+                    Give Write Access
                   </button>
                 </form>
                 <form action={removeRole} className="inline">
@@ -70,6 +80,15 @@ export default async function Admin() {
                     className="px-2 py-1 text-sm border border-neutral-300 dark:border-neutral-600 dark:text-neutral-200 dark:hover:bg-neutral-700"
                   >
                     Remove Role
+                  </button>
+                </form>
+                <form action={deleteUser} className="inline">
+                  <input type="hidden" value={user.id} name="id" />
+                  <button
+                    type="submit"
+                    className="px-2 py-1 text-sm border border-red-500 text-red-600 dark:border-red-700 dark:text-red-400 dark:hover:bg-red-900"
+                  >
+                    Delete User
                   </button>
                 </form>
               </TableCell>

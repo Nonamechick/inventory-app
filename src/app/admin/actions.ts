@@ -51,3 +51,23 @@ export async function removeRole(formData: FormData) {
         throw new Error("Failed to remove role");
     }
 }
+export async function deleteUser(formData: FormData) {
+  const { sessionClaims } = await auth();
+
+  if (sessionClaims?.metadata?.role !== "admin") {
+    throw new Error("Not authorized");
+  }
+
+  const id = formData.get("id") as string;
+
+  try {
+    const clerk = await clerkClient();
+
+    await clerk.users.deleteUser(id);
+
+    revalidatePath("/admin");
+  } catch (err) {
+    console.error("Error deleting user:", err);
+    throw new Error("Failed to delete user");
+  }
+}
