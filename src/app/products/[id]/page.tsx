@@ -3,16 +3,17 @@ import { notFound } from "next/navigation";
 import ProductForm from "./ProductForm";
 
 interface Props {
-  params: { id: string };
+  params: Promise<{ id: string }>; 
 }
 
 export default async function ProductPage({ params }: Props) {
-  const productId = Number(params.id); // convert string to number
+  const { id } = await params; 
+  const productId = Number(id); 
 
   if (isNaN(productId)) return notFound();
 
   const product = await prisma.product.findUnique({
-    where: { id: productId }, // now it's an integer
+    where: { id: productId },
   });
 
   if (!product) return notFound();
