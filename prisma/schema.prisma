@@ -12,13 +12,14 @@ model User {
   clerkId String  @unique
   email   String  @unique
   name    String?
-  posts   Post[]
+  products Product[]
 }
 
-model Post {
-  id        Int      @id @default(autoincrement())
-  title     String
-  content   String?
+model Product {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  quantity    Int    @default(0)
   published Boolean  @default(false)
   authorId  Int
   author    User     @relation(fields: [authorId], references: [id])

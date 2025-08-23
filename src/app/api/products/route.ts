@@ -1,18 +1,14 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import prisma from "@/lib/prisma";
 
-export async function Product(req: Request) {
+export async function POST(req: Request) {
   const { userId: clerkId } = await auth();
   if (!clerkId) return new Response("Unauthorized", { status: 401 });
 
   const { name, description } = await req.json();
 
-  // Try to find the user in your database
-  let user = await prisma.user.findUnique({
-    where: { clerkId },
-  });
+  let user = await prisma.user.findUnique({ where: { clerkId } });
 
-  // If user is not in DB yet, create them lazily
   if (!user) {
     const clerkUser = await currentUser();
     if (!clerkUser) return new Response("Unauthorized", { status: 401 });
@@ -26,7 +22,6 @@ export async function Product(req: Request) {
     });
   }
 
-  // Create the product
   const product = await prisma.product.create({
     data: {
       name,

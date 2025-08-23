@@ -3,41 +3,45 @@
 import { useState } from "react";
 
 export default function PostInputs() {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
 
-  async function createPost(e: React.FormEvent) {
+  async function createProduct(e: React.FormEvent) {
     e.preventDefault();
-    if (!title || !content) return;
+    if (!name || !description) return;
 
-    await fetch("/api/posts", {
+    const res = await fetch("/api/products", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title, content }),
+      body: JSON.stringify({ name, description }),
     });
 
-    setTitle("");
-    setContent("");
-    location.reload();
+    if (res.ok) {
+      setName("");
+      setDescription("");
+      location.reload();
+    } else {
+      console.error("Failed to create product", await res.text());
+    }
   }
 
   return (
-    <form onSubmit={createPost} className="space-y-2">
+    <form onSubmit={createProduct} className="space-y-2">
       <input
         type="text"
-        placeholder="Title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
+        placeholder="Product Name"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
         className="w-full p-2 border border-zinc-800 rounded"
       />
       <textarea
-        placeholder="Content"
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
+        placeholder="Description"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
         className="w-full p-2 border border-zinc-800 rounded"
       />
       <button className="w-full p-2 border border-zinc-800 rounded">
-        Post
+        Create
       </button>
     </form>
   );
