@@ -10,7 +10,7 @@ export default function PostInputs() {
     e.preventDefault();
     if (!name || !description) return;
 
-    const res = await fetch("/api/products", {
+    const res = await fetch("/api/posts", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, description }),

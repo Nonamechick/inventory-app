@@ -21,15 +21,15 @@ export default async function DashboardPage() {
         </button>
       </Link>
 
-      <div className="mt-8">
+      <div className="mt-8 space-y-4">
         {products.map((product) => (
-          <div
-            key={product.id}
-            className="p-4 border border-zinc-800 rounded mt-4"
-          >
-            <h2 className="font-bold">{product.name}</h2>
-            <p className="mt-2">{product.description}</p>
-          </div>
+          <Link key={product.id} href={`/products/${product.id}`}>
+            <div className="p-4 border border-zinc-800 rounded hover:bg-zinc-900 cursor-pointer">
+              <h2 className="font-bold">{product.name}</h2>
+              <p className="mt-2">{product.description}</p>
+              <p className="mt-2 text-sm text-gray-400">Click to edit / delete</p>
+            </div>
+          </Link>
         ))}
       </div>
     </main>
