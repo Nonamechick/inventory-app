@@ -10,7 +10,7 @@ export default async function ProductPage({ params }: Props) {
   const { id } = await params; 
   const productId = Number(id); 
 
-  if (isNaN(productId)) return notFound();
+  // if (isNaN(productId)) return notFound();
 
   const product = await prisma.product.findUnique({
     where: { id: productId },
@@ -24,7 +24,10 @@ export default async function ProductPage({ params }: Props) {
       <p className="mb-4">{product.description}</p>
 
       <h2 className="text-xl font-semibold mb-2">Edit Product</h2>
-      <ProductForm product={product} />
+      <ProductForm product={{
+    ...product,
+    description: product.description || "",
+    }} />
     </main>
   );
 }

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 interface ProductFormProps {
-  product: { id: string; name: string; description: string };
+  product: { id: number; name: string; description: string };
 }
 
 export default function ProductForm({ product }: ProductFormProps) {
