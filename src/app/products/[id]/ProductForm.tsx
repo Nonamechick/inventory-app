@@ -3,7 +3,14 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 interface ProductFormProps {
-  product: { id: number; name: string; description: string };
+  product: { 
+    id: number; 
+    name: string; 
+    description: string;
+    quantity: number; 
+    createdAt: Date; 
+    author: { id: number; email: string; name?: string | null };  
+  };
 }
 
 export default function ProductForm({ product }: ProductFormProps) {
@@ -11,13 +18,19 @@ export default function ProductForm({ product }: ProductFormProps) {
   const [name, setName] = useState(product.name);
   const [description, setDescription] = useState(product.description);
   const [loading, setLoading] = useState(false);
+  const [quantity, setQuantity] = useState(product.quantity);
 
   const handleUpdate = async () => {
     setLoading(true);
     await fetch("/api/posts", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: product.id, name, description }),
+      body: JSON.stringify({ 
+        id: product.id, 
+        name, 
+        description,
+        quantity  
+      }),
     });
     setLoading(false);
     router.refresh();
@@ -36,6 +49,16 @@ export default function ProductForm({ product }: ProductFormProps) {
 
   return (
     <div className="flex flex-col gap-2">
+       <span className="text-sm text-gray-600">
+        <strong>ID:</strong> {product.id}
+      </span>
+      <span className="text-sm text-gray-600">
+        <strong>Created At:</strong> {new Date(product.createdAt).toLocaleString()}
+      </span>
+      <span className="text-sm text-gray-600">
+        <strong>Created By:</strong> {product.author?.name || product.author?.email}
+      </span>
+
       <input
         value={name}
         onChange={(e) => setName(e.target.value)}
@@ -46,6 +69,12 @@ export default function ProductForm({ product }: ProductFormProps) {
         onChange={(e) => setDescription(e.target.value)}
         className="border p-2 rounded"
       />
+       <input
+          type="number"
+          value={quantity}
+          onChange={(e) => setQuantity(Number(e.target.value))}
+          className="border p-2 rounded"
+        />
       <div className="flex gap-2 mt-2">
         <button
           onClick={handleUpdate}

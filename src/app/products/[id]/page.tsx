@@ -14,6 +14,15 @@ export default async function ProductPage({ params }: Props) {
 
   const product = await prisma.product.findUnique({
     where: { id: productId },
+    include: {
+    author: {
+      select: {
+        id: true,
+        email: true,
+        name: true,
+      },
+    },
+  },
   });
 
   if (!product) return notFound();

@@ -8,8 +8,12 @@ export default async function DashboardPage() {
     return <div className="flex justify-center">Sign in to create Product</div>;
 
   const products = await prisma.product.findMany({
-    where: { author: { clerkId: user.id } },
     orderBy: { createdAt: "desc" },
+    include: {
+    author: {
+      select: { id: true, email: true, name: true },
+    },
+  },
   });
 
   return (
@@ -27,7 +31,18 @@ export default async function DashboardPage() {
             <div className="p-4 border border-zinc-800 rounded hover:bg-zinc-900 cursor-pointer">
               <h2 className="font-bold">{product.name}</h2>
               <p className="mt-2">{product.description}</p>
-              <p className="mt-2 text-sm text-gray-400">Click to edit / delete</p>
+
+              <div className="mt-2 text-sm text-gray-400 space-y-1">
+                <p><strong>ID:</strong> {product.id}</p>
+                <p><strong>Quantity:</strong> {product.quantity}</p>
+                <p><strong>Created At:</strong> {new Date(product.createdAt).toLocaleString()}</p>
+                <p><strong>Author:</strong> {product.author?.name}</p>
+                <p><strong>Email:</strong> {product.author?.email}</p>
+              </div>
+
+              <p className="mt-2 text-sm text-gray-500 italic">
+                Click to edit / delete
+              </p>
             </div>
           </Link>
         ))}

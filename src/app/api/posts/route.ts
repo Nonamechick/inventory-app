@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
   const { userId: clerkId } = await auth();
   if (!clerkId) return new Response("Unauthorized", { status: 401 });
 
-  const { name, description } = await req.json();
+  const { name, description, quantity = 0 } = await req.json();
 
   let user = await prisma.user.findUnique({ where: { clerkId } });
 
@@ -29,6 +29,7 @@ export async function POST(req: NextRequest) {
       name,
       description,
       authorId: user.id,
+      quantity,
     },
   });
 
@@ -40,20 +41,20 @@ export async function PUT(req: NextRequest) {
   const { userId: clerkId } = await auth();
   if (!clerkId) return new Response("Unauthorized", { status: 401 });
 
-  const { id, name, description } = await req.json();
+  const { id, name, description, quantity } = await req.json();
 
   const user = await prisma.user.findUnique({ where: { clerkId } });
   if (!user) return new Response("Unauthorized", { status: 401 });
 
   const updated = await prisma.product.updateMany({
     where: { id, authorId: user.id },
-    data: { name, description },
+    data: { name, description, quantity },
   });
 
   if (updated.count === 0)
     return new Response("Product not found or not authorized", { status: 404 });
 
-  return new Response(JSON.stringify({ id, name, description }), { status: 200 });
+  return new Response(JSON.stringify({ id, name, description, quantity }), { status: 200 });
 }
 
 // DELETE product
