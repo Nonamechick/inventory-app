@@ -36,6 +36,7 @@ export default async function DashboardPage() {
                 <p><strong>ID:</strong> {product.id}</p>
                 <p><strong>Quantity:</strong> {product.quantity}</p>
                 <p><strong>Created At:</strong> {new Date(product.createdAt).toLocaleString()}</p>
+                <p><strong>Updated:</strong> {new Date(product.updatedAt).toLocaleString()}</p>
                 <p><strong>Author:</strong> {product.author?.name}</p>
                 <p><strong>Email:</strong> {product.author?.email}</p>
               </div>

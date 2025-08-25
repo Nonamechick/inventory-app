@@ -18,7 +18,7 @@ export default function ProductForm({ product }: ProductFormProps) {
   const [name, setName] = useState(product.name);
   const [description, setDescription] = useState(product.description);
   const [loading, setLoading] = useState(false);
-  const [quantity, setQuantity] = useState(product.quantity);
+  const [quantity, setQuantity] = useState(product.quantity.toString());
 
   const handleUpdate = async () => {
     setLoading(true);
@@ -29,7 +29,7 @@ export default function ProductForm({ product }: ProductFormProps) {
         id: product.id, 
         name, 
         description,
-        quantity  
+        quantity: quantity === "" ? 0 : Number(quantity) 
       }),
     });
     setLoading(false);
@@ -72,7 +72,7 @@ export default function ProductForm({ product }: ProductFormProps) {
        <input
           type="number"
           value={quantity}
-          onChange={(e) => setQuantity(Number(e.target.value))}
+          onChange={(e) => setQuantity(e.target.value)}
           className="border p-2 rounded"
         />
       <div className="flex gap-2 mt-2">

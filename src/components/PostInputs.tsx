@@ -5,7 +5,7 @@ import { useState } from "react";
 export default function PostInputs() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [quantity, setQuantity] = useState(0);
+  const [quantity, setQuantity] = useState("0");
 
   async function createProduct(e: React.FormEvent) {
     e.preventDefault();
@@ -14,13 +14,17 @@ export default function PostInputs() {
     const res = await fetch("/api/posts", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, description, quantity }),
+      body: JSON.stringify({ 
+        name, 
+        description, 
+        quantity: quantity === "" ? 0 : Number(quantity)  
+      }),
     });
 
     if (res.ok) {
       setName("");
       setDescription("");
-      setQuantity(0);
+      setQuantity("0");
       location.reload();
     } else {
       console.error("Failed to create product", await res.text());
@@ -46,7 +50,7 @@ export default function PostInputs() {
         type="number"
         placeholder="Quantity"
         value={quantity}
-        onChange={(e) => setQuantity(Number(e.target.value))}
+        onChange={(e) => setQuantity(e.target.value)}
         className="w-full p-2 border border-zinc-800 rounded"
       />
       <button className="w-full p-2 border border-zinc-800 rounded">
