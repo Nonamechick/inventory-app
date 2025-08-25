@@ -1,7 +1,11 @@
 "use client"
 
+import { useEffect } from "react"
+
+import { useState } from "react"
+
 import {
-  UserStar,
+  UserSearch as UserStar,
   Home,
   Search,
   Settings,
@@ -9,17 +13,12 @@ import {
   LogOut,
   LogIn,
   UserPlus,
+  Sun,
+  Moon,
 } from "lucide-react"
 import Link from "next/link"
-import {
-  SignedIn,
-  SignedOut,
-  SignInButton,
-  SignOutButton,
-  SignUpButton,
-  useUser,
-  useClerk
-} from "@clerk/nextjs"
+import { useTheme } from "next-themes"
+import { SignedIn, SignedOut, SignInButton, SignOutButton, SignUpButton, useUser, useClerk } from "@clerk/nextjs"
 
 import {
   Sidebar,
@@ -42,7 +41,6 @@ import {
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
-
 const items = [
   { title: "Home", url: "/", icon: Home },
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
@@ -52,8 +50,8 @@ const items = [
 ]
 
 function UserAccountMenu() {
-  const { user } = useUser();
-  const { openUserProfile } = useClerk();
+  const { user } = useUser()
+  const { openUserProfile } = useClerk()
 
   if (!user) return null
 
@@ -62,7 +60,7 @@ function UserAccountMenu() {
       <DropdownMenuTrigger asChild>
         <button className="flex items-center gap-2 w-full rounded-md hover:bg-accent p-2">
           <Avatar className="h-8 w-8">
-            <AvatarImage src={user.imageUrl} alt={user.fullName || ""} />
+            <AvatarImage src={user.imageUrl || "/placeholder.svg"} alt={user.fullName || ""} />
             <AvatarFallback>
               {user.firstName?.[0]}
               {user.lastName?.[0]}
@@ -70,17 +68,13 @@ function UserAccountMenu() {
           </Avatar>
           <div className="flex flex-col items-start">
             <span className="text-sm font-medium">{user.fullName}</span>
-            <span className="text-xs text-muted-foreground">
-              {user.primaryEmailAddress?.emailAddress}
-            </span>
+            <span className="text-xs text-muted-foreground">{user.primaryEmailAddress?.emailAddress}</span>
           </div>
         </button>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent className="w-56">
-        <DropdownMenuItem onClick={() => openUserProfile()}>
-          Manage Account
-        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => openUserProfile()}>Manage Account</DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
           <SignOutButton>
@@ -92,6 +86,39 @@ function UserAccountMenu() {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
+  )
+}
+
+function ThemeToggle() {
+  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    return (
+      <SidebarMenuItem>
+        <SidebarMenuButton className="w-full">
+          <div className="flex items-center gap-2">
+            <div className="h-4 w-4" /> {/* Placeholder space */}
+            <span>Theme</span>
+          </div>
+        </SidebarMenuButton>
+      </SidebarMenuItem>
+    )
+  }
+
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton onClick={() => setTheme(theme === "dark" ? "light" : "dark")} className="w-full">
+        <div className="flex items-center gap-2">
+          {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          <span>{theme === "dark" ? "Light Mode" : "Dark Mode"}</span>
+        </div>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
   )
 }
 
@@ -114,6 +141,16 @@ export function AppSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* Theme Toggle Section */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Preferences</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <ThemeToggle />
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
