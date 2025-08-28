@@ -20,12 +20,12 @@ export default async function DashboardPage() {
     <main className="container mx-auto p-6">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Products Dashboard</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Inventory Dashboard</h1>
           <p className="text-muted-foreground">Manage and view all your products in one place</p>
         </div>
         <Link href="/create-product">
           <button className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors">
-            Create New Product
+            Create New Item
           </button>
         </Link>
       </div>

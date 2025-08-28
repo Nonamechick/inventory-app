@@ -3,7 +3,6 @@
 import * as React from "react"
 import {
   type ColumnDef,
-  type ColumnFiltersState,
   type SortingState,
   type VisibilityState,
   flexRender,
@@ -32,14 +31,15 @@ import Link from "next/link"
 
 export type Product = {
   id: number
+  customId: string
   name: string
-  description: string | null 
+  description: string | null
   quantity: number
   createdAt: Date
   author: {
     id: number
     email: string
-    name: string | null 
+    name: string | null
   } | null
 }
 
@@ -64,32 +64,44 @@ export const columns: ColumnDef<Product>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "name",
-    header: ({ column }) => {
-      return (
-        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Name
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
+  accessorKey: "customId",
+  header: "Custom ID",
+  cell: ({ row }) => {
+    const fullId = row.getValue("customId") as string
+    const shortId = fullId.length > 12 ? `${fullId.slice(0, 12)}…` : fullId
+
+    return (
+      <div className="font-mono">
+        <span title={fullId}>{shortId}</span>
+      </div>
+    )
     },
+  },
+  {
+    accessorKey: "name",
+    header: ({ column }) => (
+      <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        Name
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
     cell: ({ row }) => <div className="font-medium">{row.getValue("name")}</div>,
   },
   {
     accessorKey: "description",
     header: "Description",
-    cell: ({ row }) => <div className="max-w-[200px] truncate">{row.getValue("description") || "No description"}</div>,
+    cell: ({ row }) => (
+      <div className="max-w-[200px] truncate">{row.getValue("description") || "No description"}</div>
+    ),
   },
   {
     accessorKey: "quantity",
-    header: ({ column }) => {
-      return (
-        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Quantity
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
+    header: ({ column }) => (
+      <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        Quantity
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
     cell: ({ row }) => <div className="text-center">{row.getValue("quantity")}</div>,
   },
   {
@@ -97,19 +109,17 @@ export const columns: ColumnDef<Product>[] = [
     header: "Author",
     cell: ({ row }) => {
       const author = row.getValue("author") as Product["author"]
-      return <div>{author?.name || "Unknown"}</div>
+      return <div>{author?.name || author?.email || "Unknown"}</div>
     },
   },
   {
     accessorKey: "createdAt",
-    header: ({ column }) => {
-      return (
-        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Created At
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
+    header: ({ column }) => (
+      <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        Created At
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
     cell: ({ row }) => {
       const date = row.getValue("createdAt") as Date
       return <div>{new Date(date).toLocaleDateString()}</div>
@@ -120,7 +130,6 @@ export const columns: ColumnDef<Product>[] = [
     enableHiding: false,
     cell: ({ row }) => {
       const product = row.original
-
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -131,8 +140,8 @@ export const columns: ColumnDef<Product>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(product.id.toString())}>
-              Copy product ID
+            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(product.customId)}>
+              Copy Custom ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
@@ -151,26 +160,42 @@ interface ProductsDataTableProps {
 
 export function ProductsDataTable({ data }: ProductsDataTableProps) {
   const [sorting, setSorting] = React.useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
+  const [globalFilter, setGlobalFilter] = React.useState("")
 
   const table = useReactTable({
     data,
     columns,
+    state: {
+      sorting,
+      columnVisibility,
+      rowSelection,
+      globalFilter,
+    },
     onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
+    onColumnVisibilityChange: setColumnVisibility,
+    onRowSelectionChange: setRowSelection,
+    onGlobalFilterChange: setGlobalFilter,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-      rowSelection,
+    globalFilterFn: (row, columnIds, filterValue) => {
+      const search = filterValue.toLowerCase()
+      const customId = String(row.original.customId ?? "").toLowerCase()
+      const name = String(row.original.name ?? "").toLowerCase()
+      const description = String(row.original.description ?? "").toLowerCase()
+      const authorName = String(row.original.author?.name ?? "").toLowerCase()
+      const authorEmail = String(row.original.author?.email ?? "").toLowerCase()
+
+      return (
+        customId.includes(search) ||
+        name.includes(search) ||
+        description.includes(search) ||
+        authorName.includes(search) ||
+        authorEmail.includes(search)
+      )
     },
   })
 
@@ -178,9 +203,9 @@ export function ProductsDataTable({ data }: ProductsDataTableProps) {
     <div className="w-full">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter products..."
-          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-          onChange={(event) => table.getColumn("name")?.setFilterValue(event.target.value)}
+          placeholder="Search by ID, name, description, or user..."
+          value={globalFilter ?? ""}
+          onChange={(e) => setGlobalFilter(e.target.value)}
           className="max-w-sm"
         />
         <DropdownMenu>
@@ -193,33 +218,30 @@ export function ProductsDataTable({ data }: ProductsDataTableProps) {
             {table
               .getAllColumns()
               .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
+              .map((column) => (
+                <DropdownMenuCheckboxItem
+                  key={column.id}
+                  className="capitalize"
+                  checked={column.getIsVisible()}
+                  onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                >
+                  {column.id}
+                </DropdownMenuCheckboxItem>
+              ))}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                    </TableHead>
-                  )
-                })}
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id}>
+                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>
@@ -242,10 +264,10 @@ export function ProductsDataTable({ data }: ProductsDataTableProps) {
           </TableBody>
         </Table>
       </div>
+
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of {table.getFilteredRowModel().rows.length} row(s)
-          selected.
+          {table.getFilteredSelectedRowModel().rows.length} of {table.getFilteredRowModel().rows.length} row(s) selected.
         </div>
         <div className="space-x-2">
           <Button

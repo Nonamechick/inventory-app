@@ -1,16 +1,10 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import type { Product } from "@/components/products-data-table"
 
 interface ProductFormProps {
-  product: { 
-    id: number; 
-    name: string; 
-    description: string;
-    quantity: number; 
-    createdAt: Date; 
-    author: { id: number; email: string; name?: string | null };  
-  };
+  product: Product
 }
 
 export default function ProductForm({ product }: ProductFormProps) {
@@ -19,6 +13,7 @@ export default function ProductForm({ product }: ProductFormProps) {
   const [description, setDescription] = useState(product.description);
   const [loading, setLoading] = useState(false);
   const [quantity, setQuantity] = useState(product.quantity.toString());
+  const [customId, setCustomId] = useState(product.customId);
 
   const handleUpdate = async () => {
     setLoading(true);
@@ -29,7 +24,8 @@ export default function ProductForm({ product }: ProductFormProps) {
         id: product.id, 
         name, 
         description,
-        quantity: quantity === "" ? 0 : Number(quantity) 
+        quantity: quantity === "" ? 0 : Number(quantity),
+        customId
       }),
     });
     setLoading(false);
@@ -65,7 +61,7 @@ export default function ProductForm({ product }: ProductFormProps) {
         className="border p-2 rounded"
       />
       <textarea
-        value={description}
+        value={description ?? ""}
         onChange={(e) => setDescription(e.target.value)}
         className="border p-2 rounded"
       />
@@ -73,6 +69,11 @@ export default function ProductForm({ product }: ProductFormProps) {
           type="number"
           value={quantity}
           onChange={(e) => setQuantity(e.target.value)}
+          className="border p-2 rounded"
+        />
+        <input
+          value={customId}
+          onChange={(e) => setCustomId(e.target.value.toUpperCase())}
           className="border p-2 rounded"
         />
       <div className="flex gap-2 mt-2">

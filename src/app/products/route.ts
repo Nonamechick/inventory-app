@@ -3,6 +3,30 @@ import prisma from "@/lib/prisma";
 import { NextRequest } from "next/server";
 import { generateCustomId } from "@/lib/customId";
 
+// GET products 
+export async function GET(req: NextRequest) {
+  const { userId: clerkId } = await auth();
+  if (!clerkId) return new Response("Unauthorized", { status: 401 });
+
+  const { searchParams } = new URL(req.url);
+  const q = searchParams.get("q") || "";
+
+  const products = await prisma.product.findMany({
+    where: {
+      OR: [
+        { customId: { contains: q, mode: "insensitive" } },
+        { name: { contains: q, mode: "insensitive" } },
+        { description: { contains: q, mode: "insensitive" } },
+        { author: { name: { contains: q, mode: "insensitive" } } },
+      ],
+    },
+    include: { author: true },
+    orderBy: { createdAt: "desc" },
+  });
+
+  return new Response(JSON.stringify(products), { status: 200 });
+}
+
 // CREATE product
 export async function POST(req: NextRequest) {
   const { userId: clerkId } = await auth();
@@ -11,7 +35,6 @@ export async function POST(req: NextRequest) {
   const { name, description, quantity = 0, prefix = "PR" } = await req.json();
 
   let user = await prisma.user.findUnique({ where: { clerkId } });
-
   if (!user) {
     const clerkUser = await currentUser();
     if (!clerkUser) return new Response("Unauthorized", { status: 401 });
@@ -29,8 +52,8 @@ export async function POST(req: NextRequest) {
     data: {
       name,
       description,
-      authorId: user.id,
       quantity,
+      authorId: user.id,
       customId: generateCustomId(prefix),
     },
   });
@@ -43,23 +66,19 @@ export async function PUT(req: NextRequest) {
   const { userId: clerkId } = await auth();
   if (!clerkId) return new Response("Unauthorized", { status: 401 });
 
-  const { id, name, description, quantity, customId } = await req.json();
+  const { id, name, description, quantity } = await req.json();
 
   const user = await prisma.user.findUnique({ where: { clerkId } });
   if (!user) return new Response("Unauthorized", { status: 401 });
 
   const updated = await prisma.product.updateMany({
     where: { id, authorId: user.id },
-    data: { 
-      name, 
-      description, 
-      quantity,
-      ...(customId ? { customId } : {}),
-    },
+    data: { name, description, quantity },
   });
 
-  if (updated.count === 0)
+  if (updated.count === 0) {
     return new Response("Product not found or not authorized", { status: 404 });
+  }
 
   return new Response(JSON.stringify({ id, name, description, quantity }), { status: 200 });
 }
@@ -78,8 +97,9 @@ export async function DELETE(req: NextRequest) {
     where: { id, authorId: user.id },
   });
 
-  if (deleted.count === 0)
+  if (deleted.count === 0) {
     return new Response("Product not found or not authorized", { status: 404 });
+  }
 
   return new Response("Product deleted", { status: 200 });
 }

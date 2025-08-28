@@ -12,8 +12,13 @@ export default async function ProductPage({ params }: Props) {
 
   // if (isNaN(productId)) return notFound();
 
-  const product = await prisma.product.findUnique({
-    where: { id: productId },
+  const product = await prisma.product.findFirst({
+    where: {
+      OR: [
+        { id: isNaN(Number(id)) ? undefined : Number(id) },
+        { customId: id },
+      ],
+    },
     include: {
     author: {
       select: {
@@ -31,6 +36,7 @@ export default async function ProductPage({ params }: Props) {
     <main className="max-w-2xl mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">{product.name}</h1>
       <p className="mb-4">{product.description}</p>
+      <p className="mb-4">{product.customId}</p>
 
       <h2 className="text-xl font-semibold mb-2">Edit Product</h2>
       <ProductForm product={{
