@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { useRouter } from "next/navigation"
 import {
   type ColumnDef,
   type SortingState,
@@ -12,7 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
+import { ArrowUpDown, ChevronDown, Eye, Edit, Trash2, X } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -20,14 +21,10 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import Link from "next/link"
 
 export type Product = {
   id: number
@@ -64,17 +61,17 @@ export const columns: ColumnDef<Product>[] = [
     enableHiding: false,
   },
   {
-  accessorKey: "customId",
-  header: "Custom ID",
-  cell: ({ row }) => {
-    const fullId = row.getValue("customId") as string
-    const shortId = fullId.length > 12 ? `${fullId.slice(0, 12)}…` : fullId
+    accessorKey: "customId",
+    header: "Custom ID",
+    cell: ({ row }) => {
+      const fullId = row.getValue("customId") as string
+      const shortId = fullId.length > 12 ? `${fullId.slice(0, 12)}…` : fullId
 
-    return (
-      <div className="font-mono">
-        <span title={fullId}>{shortId}</span>
-      </div>
-    )
+      return (
+        <div className="font-mono">
+          <span title={fullId}>{shortId}</span>
+        </div>
+      )
     },
   },
   {
@@ -90,9 +87,7 @@ export const columns: ColumnDef<Product>[] = [
   {
     accessorKey: "description",
     header: "Description",
-    cell: ({ row }) => (
-      <div className="max-w-[200px] truncate">{row.getValue("description") || "No description"}</div>
-    ),
+    cell: ({ row }) => <div className="max-w-[200px] truncate">{row.getValue("description") || "No description"}</div>,
   },
   {
     accessorKey: "quantity",
@@ -125,33 +120,6 @@ export const columns: ColumnDef<Product>[] = [
       return <div>{new Date(date).toLocaleDateString()}</div>
     },
   },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const product = row.original
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(product.customId)}>
-              Copy Custom ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link href={`/products/${product.id}`}>View/Edit product</Link>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
-    },
-  },
 ]
 
 interface ProductsDataTableProps {
@@ -159,10 +127,12 @@ interface ProductsDataTableProps {
 }
 
 export function ProductsDataTable({ data }: ProductsDataTableProps) {
+  const router = useRouter()
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
   const [globalFilter, setGlobalFilter] = React.useState("")
+  const [isDeleting, setIsDeleting] = React.useState(false)
 
   const table = useReactTable({
     data,
@@ -199,6 +169,55 @@ export function ProductsDataTable({ data }: ProductsDataTableProps) {
     },
   })
 
+  const selectedRows = table.getFilteredSelectedRowModel().rows
+  const selectedProducts = selectedRows.map((row) => row.original)
+
+  const handleBulkView = () => {
+    if (selectedProducts.length === 1) {
+      router.push(`/products/${selectedProducts[0].id}`)
+    } else {
+      router.push(`/products/${selectedProducts[0].id}`)
+    }
+  }
+
+  const handleBulkEdit = () => {
+    if (selectedProducts.length === 1) {
+      window.location.href = `/products/${selectedProducts[0].id}`
+    } else {
+      alert(`Bulk edit for ${selectedProducts.length} products - implement bulk edit modal`)
+    }
+  }
+
+  const handleBulkDelete = async () => {
+    if (confirm(`Are you sure you want to delete ${selectedProducts.length} product(s)?`)) {
+      setIsDeleting(true)
+      try {
+        await Promise.all(
+          selectedProducts.map(async (product) => {
+            await fetch("/api/posts", {
+              method: "DELETE",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ id: product.id }),
+            })
+          }),
+        )
+
+        
+        setRowSelection({})
+        router.refresh()
+      } catch (error) {
+        console.error("Error deleting products:", error)
+        alert("Failed to delete some products. Please try again.")
+      } finally {
+        setIsDeleting(false)
+      }
+    }
+  }
+
+  const clearSelection = () => {
+    setRowSelection({})
+  }
+
   return (
     <div className="w-full">
       <div className="flex items-center py-4">
@@ -231,6 +250,49 @@ export function ProductsDataTable({ data }: ProductsDataTableProps) {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+
+      {selectedRows.length > 0 && (
+        <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg mb-4 border">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium">
+              {selectedRows.length} product{selectedRows.length > 1 ? "s" : ""} selected
+            </span>
+            <Button variant="ghost" size="sm" onClick={clearSelection} className="h-8 w-8 p-0">
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleBulkView}
+              className="flex items-center gap-2 bg-transparent"
+            >
+              <Eye className="h-4 w-4" />
+              View
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleBulkEdit}
+              className="flex items-center gap-2 bg-transparent"
+            >
+              <Edit className="h-4 w-4" />
+              Edit
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleBulkDelete}
+              disabled={isDeleting}
+              className="flex items-center gap-2 text-destructive hover:text-destructive bg-transparent"
+            >
+              <Trash2 className="h-4 w-4" />
+              {isDeleting ? "Deleting..." : "Delete"}
+            </Button>
+          </div>
+        </div>
+      )}
 
       <div className="rounded-md border">
         <Table>
@@ -267,7 +329,8 @@ export function ProductsDataTable({ data }: ProductsDataTableProps) {
 
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of {table.getFilteredRowModel().rows.length} row(s) selected.
+          {table.getFilteredSelectedRowModel().rows.length} of {table.getFilteredRowModel().rows.length} row(s)
+          selected.
         </div>
         <div className="space-x-2">
           <Button
