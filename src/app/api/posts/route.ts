@@ -83,3 +83,21 @@ export async function DELETE(req: NextRequest) {
 
   return new Response("Product deleted", { status: 200 });
 }
+
+// GET latest product
+export async function GET() {
+  try {
+    const latestProduct = await prisma.product.findFirst({
+      orderBy: { createdAt: "desc" }, 
+    });
+
+    if (!latestProduct) {
+      return new Response(JSON.stringify({ message: "No products found" }), { status: 404 });
+    }
+
+    return new Response(JSON.stringify(latestProduct), { status: 200 });
+  } catch (error) {
+    console.error("Error fetching latest product:", error);
+    return new Response("Internal Server Error", { status: 500 });
+  }
+}
