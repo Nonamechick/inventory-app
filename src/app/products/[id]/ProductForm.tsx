@@ -1,6 +1,7 @@
 "use client"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { toast } from "sonner"
 import type { Product } from "@/components/products-data-table"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -8,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { CalendarDays, User, Hash, Package, Trash2, Save } from "lucide-react"
+import { CalendarDays, User, Hash, Package, Trash2, Loader2, Save } from "lucide-react"
 
 interface ProductFormProps {
   product: Product
@@ -24,30 +25,60 @@ export default function ProductForm({ product }: ProductFormProps) {
 
   const handleUpdate = async () => {
     setLoading(true)
-    await fetch("/api/posts", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        id: product.id,
-        name,
-        description,
-        quantity: quantity === "" ? 0 : Number(quantity),
-        customId,
-      }),
-    })
-    setLoading(false)
-    router.refresh()
+    toast.loading("Updating product...", { id: "update-product" })
+
+    try {
+      const response = await fetch("/api/posts", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: product.id,
+          name,
+          description,
+          quantity: quantity === "" ? 0 : Number(quantity),
+          customId,
+        }),
+      })
+
+      if (response.ok) {
+        toast.success(`Product "${name}" updated successfully!`, { id: "update-product" })
+        router.refresh()
+      } else {
+        throw new Error("Failed to update product")
+      }
+    } catch (error) {
+      toast.error("Failed to update product. Please try again.", { id: "update-product" })
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handleDelete = async () => {
+    if (!confirm("Are you sure you want to delete this product? This action cannot be undone.")) {
+      return
+    }
+
     setLoading(true)
-    await fetch("/api/posts", {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: product.id }),
-    })
-    setLoading(false)
-    router.push("/dashboard")
+    toast.loading("Deleting product...", { id: "delete-product" })
+
+    try {
+      const response = await fetch("/api/posts", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: product.id }),
+      })
+
+      if (response.ok) {
+        toast.success(`Product "${name}" deleted successfully!`, { id: "delete-product" })
+        router.push("/dashboard")
+      } else {
+        throw new Error("Failed to delete product")
+      }
+    } catch (error) {
+      toast.error("Failed to delete product. Please try again.", { id: "delete-product" })
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -157,12 +188,12 @@ export default function ProductForm({ product }: ProductFormProps) {
               className="bg-primary hover:bg-primary/90 text-primary-foreground flex items-center gap-2"
             >
               <Save className="h-4 w-4" />
-              {loading ? "Updating..." : "Update Product"}
+              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Update Product"}
             </Button>
 
             <Button onClick={handleDelete} disabled={loading} variant="destructive" className="flex items-center gap-2">
               <Trash2 className="h-4 w-4" />
-              {loading ? "Deleting..." : "Delete Product"}
+              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Delete Product"}
             </Button>
           </div>
         </CardContent>

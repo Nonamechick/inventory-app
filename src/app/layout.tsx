@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
 import { Analytics } from "@vercel/analytics/next"
+import { Toaster } from "sonner"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -55,6 +56,7 @@ export default function RootLayout({
                 {children}
               </div>
             </main>
+            <Toaster position="top-right" richColors />
           </SidebarProvider>
           </ThemeProvider>
           <Analytics />
