@@ -53,7 +53,6 @@
     "typescript": "^5"
   },
   "overrides": {
-    "next-themes": "^0.4.3",
     "lodash.set": "npm:lodash@^4.17.21",
     "lodash.update": "npm:lodash@^4.17.21"
   }
