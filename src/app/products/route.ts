@@ -2,6 +2,16 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 import prisma from "@/lib/prisma";
 import { NextRequest } from "next/server";
 import { generateCustomId } from "@/lib/customId";
+import { hasPermission } from "@/lib/permissions";
+import { Roles } from "../../../types/globals";
+
+
+async function getUserAndRole(clerkId: string) {
+  const clerkUser = await currentUser();
+  const role = clerkUser?.publicMetadata?.role as Roles | undefined;
+
+  return { clerkUser, role };
+}
 
 // GET products 
 export async function GET(req: NextRequest) {
@@ -31,6 +41,13 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const { userId: clerkId } = await auth();
   if (!clerkId) return new Response("Unauthorized", { status: 401 });
+
+  const { clerkUser, role } = await getUserAndRole(clerkId);
+
+  if (!hasPermission(role, "create")) {
+    return new Response("Forbidden: insufficient permissions", { status: 403 });
+  }
+
 
   const { name, description, quantity = 0, prefix = "PR" } = await req.json();
 
@@ -66,13 +83,24 @@ export async function PUT(req: NextRequest) {
   const { userId: clerkId } = await auth();
   if (!clerkId) return new Response("Unauthorized", { status: 401 });
 
+  const { role } = await getUserAndRole(clerkId);
+
+  if (!hasPermission(role, "update")) {
+    return new Response("Forbidden: insufficient permissions", { status: 403 });
+  }
+
   const { id, name, description, quantity } = await req.json();
 
   const user = await prisma.user.findUnique({ where: { clerkId } });
   if (!user) return new Response("Unauthorized", { status: 401 });
 
+  const whereClause =
+    role === "admin" || role === "creator" || role === "write-access"
+      ? { id } 
+      : { id, authorId: user.id };
+
   const updated = await prisma.product.updateMany({
-    where: { id, authorId: user.id },
+    where: whereClause,
     data: { name, description, quantity },
   });
 
@@ -88,13 +116,24 @@ export async function DELETE(req: NextRequest) {
   const { userId: clerkId } = await auth();
   if (!clerkId) return new Response("Unauthorized", { status: 401 });
 
+  const { role } = await getUserAndRole(clerkId);
+
+  if (!hasPermission(role, "delete")) {
+    return new Response("Forbidden: insufficient permissions", { status: 403 });
+  }
+
   const { id } = await req.json();
 
   const user = await prisma.user.findUnique({ where: { clerkId } });
   if (!user) return new Response("Unauthorized", { status: 401 });
 
+  const whereClause =
+    role === "admin" || role === "creator"
+      ? { id } 
+      : { id, authorId: user.id };
+
   const deleted = await prisma.product.deleteMany({
-    where: { id, authorId: user.id },
+    where: whereClause,
   });
 
   if (deleted.count === 0) {
