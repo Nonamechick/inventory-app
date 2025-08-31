@@ -1,11 +1,10 @@
-import { currentUser } from "@clerk/nextjs/server"
+//  import { currentUser } from "@clerk/nextjs/server"
 import prisma from "@/lib/prisma"
 import Link from "next/link"
 import { ProductsDataTable } from "@/components/products-data-table"
 
 export default async function DashboardPage() {
-  const user = await currentUser()
-  if (!user) return <div className="flex justify-center">Sign in to create Product</div>
+
 
   const products = await prisma.product.findMany({
     orderBy: { createdAt: "desc" },
