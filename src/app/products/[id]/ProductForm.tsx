@@ -28,7 +28,7 @@ export default function ProductForm({ product }: ProductFormProps) {
     toast.loading("Updating product...", { id: "update-product" })
 
     try {
-      const response = await fetch("/api/posts", {
+      const response = await fetch("/products", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -62,7 +62,7 @@ export default function ProductForm({ product }: ProductFormProps) {
     toast.loading("Deleting product...", { id: "delete-product" })
 
     try {
-      const response = await fetch("/api/posts", {
+      const response = await fetch("/products", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: product.id }),

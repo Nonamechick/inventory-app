@@ -194,7 +194,7 @@ export function ProductsDataTable({ data }: ProductsDataTableProps) {
       try {
         await Promise.all(
           selectedProducts.map(async (product) => {
-            await fetch("/api/posts", {
+            await fetch("/products", {
               method: "DELETE",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ id: product.id }),
