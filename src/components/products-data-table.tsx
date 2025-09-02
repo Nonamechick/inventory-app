@@ -33,6 +33,7 @@ export type Product = {
   description: string | null
   quantity: number
   createdAt: Date
+  inventoryId: number
   author: {
     id: number
     email: string

@@ -4,7 +4,7 @@ import { NextRequest } from "next/server";
 import { generateCustomId } from "@/lib/customId";
 import { hasPermission } from "@/lib/permissions";
 import { Roles } from "../../../types/globals";
-
+import type { Prisma } from "@prisma/client";
 
 async function getUserAndRole(clerkId: string) {
   const clerkUser = await currentUser();
@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
   }
 
 
-  const { name, description, quantity = 0, prefix = "PR" } = await req.json();
+  const { name, description, quantity = 0, prefix = "PR", inventoryId  } = await req.json();
 
   let user = await prisma.user.findUnique({ where: { clerkId } });
   if (!user) {
@@ -65,15 +65,17 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  const product = await prisma.product.create({
-    data: {
-      name,
-      description,
-      quantity,
-      authorId: user.id,
-      customId: generateCustomId(prefix),
-    },
-  });
+const productData: Prisma.ProductCreateInput = {
+  name,
+  description,
+  quantity,
+  author: { connect: { id: user.id } },
+  customId: generateCustomId(prefix),
+  inventory: { connect: { id: inventoryId } },
+};
+
+
+const product = await prisma.product.create({ data: productData });
 
   return new Response(JSON.stringify(product), { status: 201 });
 }

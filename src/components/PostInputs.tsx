@@ -1,7 +1,5 @@
 "use client"
 
-import type React from "react"
-
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -14,12 +12,29 @@ export default function PostInputs() {
   const [description, setDescription] = useState("")
   const [quantity, setQuantity] = useState("0")
   const [customId, setCustomId] = useState<string | null>(null)
+  const [inventoryId, setInventoryId] = useState<number | null>(null)
+  const [inventories, setInventories] = useState<{ id: number; title: string }[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [showSuccessToast, setShowSuccessToast] = useState(false)
 
+  useEffect(() => {
+    async function fetchInventories() {
+      try {
+        const res = await fetch("/inventory")
+        if (res.ok) {
+          const data = await res.json()
+          setInventories(data)
+        }
+      } catch (err) {
+        console.error("Failed to fetch inventories", err)
+      }
+    }
+    fetchInventories()
+  }, [])
+
   async function createProduct(e: React.FormEvent) {
     e.preventDefault()
-    if (!name || !description) return
+    if (!name || !description || !inventoryId) return
 
     setIsLoading(true)
 
@@ -31,6 +46,7 @@ export default function PostInputs() {
           name,
           description,
           quantity: quantity === "" ? 0 : Number(quantity),
+          inventoryId,
         }),
       })
 
@@ -41,6 +57,7 @@ export default function PostInputs() {
         setName("")
         setDescription("")
         setQuantity("0")
+        setInventoryId(null)
       } else {
         console.error("Failed to create product", await res.text())
       }
@@ -53,9 +70,7 @@ export default function PostInputs() {
 
   useEffect(() => {
     if (showSuccessToast) {
-      const timer = setTimeout(() => {
-        setShowSuccessToast(false)
-      }, 5000)
+      const timer = setTimeout(() => setShowSuccessToast(false), 5000)
       return () => clearTimeout(timer)
     }
   }, [showSuccessToast])
@@ -63,17 +78,14 @@ export default function PostInputs() {
   return (
     <div className="space-y-6">
       {showSuccessToast && (
-        <div className="fixed top-4 right-4 z-50 bg-green-600 text-white px-6 py-4 rounded-lg shadow-lg animate-in slide-in-from-top-2 duration-300">
+        <div className="fixed top-4 right-4 z-50 bg-green-600 text-white px-6 py-4 rounded-lg shadow-lg">
           <div className="flex items-center gap-3">
             <CheckCircle className="w-5 h-5" />
             <div>
               <p className="font-medium">Product Created!</p>
               <p className="text-sm opacity-90">Your product has been added successfully</p>
             </div>
-            <button
-              onClick={() => setShowSuccessToast(false)}
-              className="ml-2 hover:bg-green-700 rounded p-1 transition-colors"
-            >
+            <button onClick={() => setShowSuccessToast(false)}>
               <X className="w-4 h-4" />
             </button>
           </div>
@@ -83,21 +95,13 @@ export default function PostInputs() {
       <form onSubmit={createProduct} className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="name">Product Name</Label>
-          <Input
-            id="name"
-            type="text"
-            placeholder="Enter product name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
+          <Input id="name" type="text" value={name} onChange={(e) => setName(e.target.value)} required />
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="description">Description</Label>
           <Textarea
             id="description"
-            placeholder="Describe your product"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={4}
@@ -107,17 +111,30 @@ export default function PostInputs() {
 
         <div className="space-y-2">
           <Label htmlFor="quantity">Quantity</Label>
-          <Input
-            id="quantity"
-            type="number"
-            placeholder="0"
-            value={quantity}
-            onChange={(e) => setQuantity(e.target.value)}
-            min="0"
-          />
+          <Input id="quantity" type="number" value={quantity} onChange={(e) => setQuantity(e.target.value)} min="0" />
         </div>
 
-        <Button type="submit" className="w-full" disabled={isLoading || !name || !description}>
+        <div className="space-y-2">
+          <Label htmlFor="inventory">Assign to Inventory</Label>
+          <select
+            id="inventory"
+            value={inventoryId ?? ""}
+            onChange={(e) => setInventoryId(Number(e.target.value))}
+            className="w-full border rounded-lg p-2"
+            required
+          >
+            <option value="" disabled>
+              Select inventory
+            </option>
+            {inventories.map((inv) => (
+              <option key={inv.id} value={inv.id}>
+                {inv.title}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <Button type="submit" className="w-full" disabled={isLoading || !name || !description || !inventoryId}>
           {isLoading ? (
             <>
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -128,20 +145,6 @@ export default function PostInputs() {
           )}
         </Button>
       </form>
-
-      {customId && (
-        <div className="bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg p-4 animate-in fade-in-50 duration-500">
-          <div className="flex items-center gap-3">
-            <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
-            <div>
-              <p className="text-green-800 dark:text-green-200 font-medium">Product created successfully!</p>
-              <p className="text-green-700 dark:text-green-300 text-sm font-mono">
-                Product ID: <strong>{customId}</strong>
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

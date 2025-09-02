@@ -7,29 +7,27 @@ import { Separator } from "@/components/ui/separator"
 import { ArrowLeft, Package2 } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import type { Product } from "@prisma/client"
 
 interface Props {
-  params: Promise<{ id: string }>
+  params: { id: string }
+}
+
+interface ProductFormProps {
+  product: Product & { author: { id: number; email: string; name: string } }
 }
 
 export default async function ProductPage({ params }: Props) {
-  const { id } = await params
+  const { id } = params
   const productId = Number(id)
 
-  const product = await prisma.product.findFirst({
-    where: {
-      OR: [{ id: isNaN(Number(id)) ? undefined : Number(id) }, { customId: id }],
-    },
-    include: {
-      author: {
-        select: {
-          id: true,
-          email: true,
-          name: true,
-        },
-      },
-    },
-  })
+const product = await prisma.product.findFirst({
+  where: {
+    OR: [{ id: isNaN(productId) ? undefined : productId }, { customId: id }],
+  },
+  include: { author: { select: { id: true, email: true, name: true } } },
+}) as (Product & { author: { id: number; email: string; name: string } }) | null;
+
 
   if (!product) return notFound()
 
@@ -85,6 +83,7 @@ export default async function ProductPage({ params }: Props) {
           product={{
             ...product,
             description: product.description || "",
+            author: product.author,
           }}
         />
       </main>

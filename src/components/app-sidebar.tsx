@@ -7,7 +7,7 @@ import { useState } from "react"
 import {
   UserSearch as UserStar,
   Home,
-  Search,
+  ListChecks,
   Settings,
   LayoutDashboard,
   LogOut,
@@ -45,7 +45,7 @@ const items = [
   { title: "Home", url: "/", icon: Home },
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Admin Panel", url: "/admin", icon: UserStar },
-  // { title: "Search", url: "/search", icon: Search },
+  { title: "Inventories", url: "/inventories", icon: ListChecks  },
   { title: "Settings", url: "/settings", icon: Settings },
 ]
 

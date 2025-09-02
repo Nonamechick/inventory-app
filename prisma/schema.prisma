@@ -8,21 +8,34 @@ datasource db {
 }
 
 model User {
-  id      Int     @id @default(autoincrement())
-  clerkId String  @unique
-  email   String  @unique
-  name    String?
-  products Product[]
+  id          Int         @id @default(autoincrement())
+  clerkId     String      @unique
+  email       String      @unique
+  name        String?
+  products    Product[]
+  inventories Inventory[]
+}
+
+model Inventory {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String?
+  ownerId     Int
+  owner       User      @relation(fields: [ownerId], references: [id])
+  createdAt   DateTime  @default(now())
+  products    Product[]
 }
 
 model Product {
-  id          Int      @id @default(autoincrement())
-  customId    String   @unique  
+  id          Int       @id @default(autoincrement())
+  customId    String    @unique
   name        String
   description String?
-  quantity    Int    @default(0)
-  published Boolean  @default(false)
-  authorId  Int
-  author    User     @relation(fields: [authorId], references: [id])
-  createdAt DateTime @default(now())
+  quantity    Int       @default(0)
+  published   Boolean   @default(false)
+  authorId    Int?
+  author      User?      @relation(fields: [authorId], references: [id])
+  inventoryId Int
+  inventory   Inventory @relation(fields: [inventoryId], references: [id])
+  createdAt   DateTime  @default(now())
 }
