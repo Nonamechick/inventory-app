@@ -2,6 +2,8 @@ import prisma from "@/lib/prisma"
 import Link from "next/link"
 import { ProductsDataTable } from "@/components/products-data-table"
 
+export const revalidate = 0;
+
 export default async function DashboardPage() {
   const inventories = await prisma.inventory.findMany({
     include: {
