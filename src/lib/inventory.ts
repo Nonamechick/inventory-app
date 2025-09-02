@@ -1,16 +1,20 @@
-export interface Product {
-  id: number;
-  name: string;
-  description: string;
-  quantity: number;
-  customId: string;
-  createdAt: string;
-  author?: { id: number; name: string; email: string };
+export interface Inventory {
+  id: string
+  title: string
+  description: string
+  products?: Product[]
+  createdAt?: Date
+  updatedAt?: Date
 }
 
-export interface Inventory {
-  id: number;
-  title: string;
-  description: string;
-  products: Product[];
+export interface Product {
+  id: string
+  name: string
+  description?: string
+  quantity: number
+  price?: number
+  sku?: string
+  inventoryId: string
+  createdAt?: Date
+  updatedAt?: Date
 }

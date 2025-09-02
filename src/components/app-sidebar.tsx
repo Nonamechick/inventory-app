@@ -128,7 +128,7 @@ export function AppSidebar() {
       <SidebarContent>
         {/* Navigation Links */}
         <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
+          <SidebarGroupLabel>Inventory Management System</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
