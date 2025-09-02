@@ -1,10 +1,13 @@
 "use client"
 
+import type React from "react"
+
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { CheckCircle, Loader2, X } from "lucide-react"
 
 export default function PostInputs() {
@@ -116,22 +119,22 @@ export default function PostInputs() {
 
         <div className="space-y-2">
           <Label htmlFor="inventory">Assign to Inventory</Label>
-          <select
-            id="inventory"
-            value={inventoryId ?? ""}
-            onChange={(e) => setInventoryId(Number(e.target.value))}
-            className="w-full border rounded-lg p-2"
+          <Select
+            value={inventoryId?.toString() || ""}
+            onValueChange={(value) => setInventoryId(Number(value))}
             required
           >
-            <option value="" disabled>
-              Select inventory
-            </option>
-            {inventories.map((inv) => (
-              <option key={inv.id} value={inv.id}>
-                {inv.title}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select inventory" />
+            </SelectTrigger>
+            <SelectContent>
+              {inventories.map((inv) => (
+                <SelectItem key={inv.id} value={inv.id.toString()}>
+                  {inv.title}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <Button type="submit" className="w-full" disabled={isLoading || !name || !description || !inventoryId}>
