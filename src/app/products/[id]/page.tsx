@@ -1,47 +1,33 @@
-import prisma from "@/lib/prisma"
-import { notFound } from "next/navigation"
-import ProductForm from "./ProductForm"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
-import { ArrowLeft, Package2 } from "lucide-react"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import type { Product } from "@prisma/client"
+import prisma from "@/lib/prisma";
+import { notFound } from "next/navigation";
+import ProductForm from "./ProductForm";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { ArrowLeft, Package2 } from "lucide-react";
+import Link from "next/link";
 
-interface Props {
-  params: { id: string }
-}
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default async function ProductPage({ params }: any) {
+  const { id } = await params;
+  const productId = Number(id);
 
-interface ProductFormProps {
-  product: Product & { author: { id: number; email: string; name: string } }
-}
+  const product = await prisma.product.findFirst({
+    where: { OR: [{ id: productId }, { customId: id }] },
+    include: { author: { select: { id: true, email: true, name: true } } },
+  });
 
-export default async function ProductPage({ params }: Props) {
-  const { id } = params
-  const productId = Number(id)
-
-const product = await prisma.product.findFirst({
-  where: {
-    OR: [{ id: isNaN(productId) ? undefined : productId }, { customId: id }],
-  },
-  include: { author: { select: { id: true, email: true, name: true } } },
-}) as (Product & { author: { id: number; email: string; name: string } }) | null;
-
-
-  if (!product) return notFound()
+  if (!product) return notFound();
 
   return (
     <div className="min-h-screen bg-background">
       <div className="border-b border-border bg-card/50">
         <div className="max-w-4xl mx-auto px-4 py-6">
           <div className="flex items-center gap-4 mb-4">
-            <Button variant="ghost" size="sm" asChild>
-              <Link href="/dashboard" className="flex items-center gap-2 text-muted-foreground hover:text-foreground">
-                <ArrowLeft className="h-4 w-4" />
-                Back to Dashboard
-              </Link>
-            </Button>
+            <Link href="/dashboard" className="flex items-center gap-2 text-muted-foreground hover:text-foreground">
+              <ArrowLeft className="h-4 w-4" />
+              Back to Dashboard
+            </Link>
           </div>
 
           <div className="flex items-start justify-between">
@@ -53,12 +39,8 @@ const product = await prisma.product.findFirst({
                 <div>
                   <h1 className="text-3xl font-bold text-foreground text-balance">{product.name}</h1>
                   <div className="flex items-center gap-2 mt-1">
-                    <Badge variant="secondary" className="text-xs">
-                      ID: {product.customId}
-                    </Badge>
-                    <Badge variant="outline" className="text-xs">
-                      Qty: {product.quantity}
-                    </Badge>
+                    <Badge variant="secondary" className="text-xs">ID: {product.customId}</Badge>
+                    <Badge variant="outline" className="text-xs">Qty: {product.quantity}</Badge>
                   </div>
                 </div>
               </div>
@@ -83,10 +65,9 @@ const product = await prisma.product.findFirst({
           product={{
             ...product,
             description: product.description || "",
-            author: product.author,
           }}
         />
       </main>
     </div>
-  )
+  );
 }
