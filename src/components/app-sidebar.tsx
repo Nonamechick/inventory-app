@@ -8,7 +8,7 @@ import {
   UserSearch as UserStar,
   Home,
   ListChecks,
-  Settings,
+  // Settings,
   LayoutDashboard,
   LogOut,
   LogIn,
@@ -46,7 +46,7 @@ const items = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Admin Panel", url: "/admin", icon: UserStar },
   { title: "Inventories", url: "/inventories", icon: ListChecks  },
-  { title: "Settings", url: "/settings", icon: Settings },
+  // { title: "Settings", url: "/settings", icon: Settings },
 ]
 
 function UserAccountMenu() {

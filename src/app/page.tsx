@@ -20,7 +20,7 @@ export default async function Home() {
           </p>
         </div>
       ) : (
-        <p>No products yet.</p>
+        <p>No items yet.</p>
       )}
 
       <h1 className="text-2xl font-bold mt-6">Popular Inventories</h1>

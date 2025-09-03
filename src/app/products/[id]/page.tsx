@@ -53,7 +53,7 @@ export default async function ProductPage({ params }: any) {
         {product.description && (
           <Card className="mb-8 bg-card border-border shadow-sm">
             <CardContent className="p-6">
-              <h2 className="text-lg font-semibold text-card-foreground mb-3">Product Description</h2>
+              <h2 className="text-lg font-semibold text-card-foreground mb-3">Item Description</h2>
               <p className="text-foreground leading-relaxed text-pretty">{product.description}</p>
             </CardContent>
           </Card>

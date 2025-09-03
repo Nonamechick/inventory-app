@@ -96,7 +96,7 @@ export default function InventoriesPage() {
                     <div className="flex items-center gap-4 text-sm">
                       <span className="inline-flex items-center gap-1.5 text-muted-foreground">
                         <Package className="h-3.5 w-3.5" />
-                        {inv.products?.length ?? 0} products
+                        {inv.products?.length ?? 0} items
                       </span>
                     </div>
                   </div>

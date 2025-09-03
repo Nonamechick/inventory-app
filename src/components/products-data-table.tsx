@@ -185,12 +185,12 @@ export function ProductsDataTable({ data }: ProductsDataTableProps) {
     if (selectedProducts.length === 1) {
       window.location.href = `/products/${selectedProducts[0].id}`
     } else {
-      alert(`Bulk edit for ${selectedProducts.length} products - implement bulk edit modal`)
+      alert(`Bulk edit for ${selectedProducts.length} items - implement bulk edit modal`)
     }
   }
 
   const handleBulkDelete = async () => {
-    if (confirm(`Are you sure you want to delete ${selectedProducts.length} product(s)?`)) {
+    if (confirm(`Are you sure you want to delete ${selectedProducts.length} item(s)?`)) {
       setIsDeleting(true)
       try {
         await Promise.all(
@@ -206,8 +206,8 @@ export function ProductsDataTable({ data }: ProductsDataTableProps) {
         setRowSelection({})
         router.refresh()
       } catch (error) {
-        console.error("Error deleting products:", error)
-        alert("Failed to delete some products. Please try again.")
+        console.error("Error deleting items:", error)
+        alert("Failed to delete some items. Please try again.")
       } finally {
         setIsDeleting(false)
       }
@@ -255,7 +255,7 @@ export function ProductsDataTable({ data }: ProductsDataTableProps) {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 p-3 sm:p-4 bg-muted/50 rounded-lg mb-4 border">
           <div className="flex items-center gap-2">
             <span className="text-xs sm:text-sm font-medium">
-              {selectedRows.length} product{selectedRows.length > 1 ? "s" : ""} selected
+              {selectedRows.length} item{selectedRows.length > 1 ? "s" : ""} selected
             </span>
             <Button variant="ghost" size="sm" onClick={clearSelection} className="h-6 w-6 sm:h-8 sm:w-8 p-0">
               <X className="h-3 w-3 sm:h-4 sm:w-4" />
@@ -355,7 +355,7 @@ export function ProductsDataTable({ data }: ProductsDataTableProps) {
                   </span>
                 </div>
 
-                {/* Product name */}
+                {/* Item name */}
                 <div>
                   <h3 className="font-medium text-base">{product.name}</h3>
                   {product.description && <p className="text-sm text-muted-foreground mt-1">{product.description}</p>}

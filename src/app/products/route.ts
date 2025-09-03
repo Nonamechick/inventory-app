@@ -107,7 +107,7 @@ export async function PUT(req: NextRequest) {
   });
 
   if (updated.count === 0) {
-    return new Response("Product not found or not authorized", { status: 404 });
+    return new Response("Item not found or not authorized", { status: 404 });
   }
 
   return new Response(JSON.stringify({ id, name, description, quantity }), { status: 200 });
@@ -139,8 +139,8 @@ export async function DELETE(req: NextRequest) {
   });
 
   if (deleted.count === 0) {
-    return new Response("Product not found or not authorized", { status: 404 });
+    return new Response("Item not found or not authorized", { status: 404 });
   }
 
-  return new Response("Product deleted", { status: 200 });
+  return new Response("Item deleted", { status: 200 });
 }

@@ -85,8 +85,8 @@ export default function PostInputs() {
           <div className="flex items-center gap-3">
             <CheckCircle className="w-5 h-5" />
             <div>
-              <p className="font-medium">Product Created!</p>
-              <p className="text-sm opacity-90">Your product has been added successfully</p>
+              <p className="font-medium">Item Created!</p>
+              <p className="text-sm opacity-90">Your item has been added successfully</p>
             </div>
             <button onClick={() => setShowSuccessToast(false)}>
               <X className="w-4 h-4" />
@@ -97,7 +97,7 @@ export default function PostInputs() {
 
       <form onSubmit={createProduct} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="name">Product Name</Label>
+          <Label htmlFor="name">Item Name</Label>
           <Input id="name" type="text" value={name} onChange={(e) => setName(e.target.value)} required />
         </div>
 
@@ -141,10 +141,10 @@ export default function PostInputs() {
           {isLoading ? (
             <>
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              Creating Product...
+              Creating Item...
             </>
           ) : (
-            "Create Product"
+            "Create Item"
           )}
         </Button>
       </form>

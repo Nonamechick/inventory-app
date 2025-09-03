@@ -231,7 +231,7 @@ export default function InventoryDetailPage() {
                   <Package className="w-6 h-6 text-primary" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-semibold text-foreground">Products</h2>
+                  <h2 className="text-xl font-semibold text-foreground">Items</h2>
                   <p className="text-sm text-muted-foreground">
                     {inventory.products?.length ?? 0} items in inventory
                   </p>
@@ -264,9 +264,9 @@ export default function InventoryDetailPage() {
                   <div className="p-2 bg-primary/10 rounded-lg inline-flex mb-4">
                     <Package className="w-6 h-6 text-primary" />
                   </div>
-                  <h3 className="text-lg font-medium text-foreground mb-2">No Products Yet</h3>
+                  <h3 className="text-lg font-medium text-foreground mb-2">No Items Yet</h3>
                   <p className="text-muted-foreground">
-                    This inventory doesn&apos;t have any products added yet.
+                    This inventory doesn&apos;t have any items added yet.
                   </p>
                 </div>
               )}

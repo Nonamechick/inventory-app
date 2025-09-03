@@ -25,7 +25,7 @@ export default function ProductForm({ product }: ProductFormProps) {
 
   const handleUpdate = async () => {
     setLoading(true)
-    toast.loading("Updating product...", { id: "update-product" })
+    toast.loading("Updating item...", { id: "update-product" })
 
     try {
       const response = await fetch("/products", {
@@ -41,25 +41,25 @@ export default function ProductForm({ product }: ProductFormProps) {
       })
 
       if (response.ok) {
-        toast.success(`Product "${name}" updated successfully!`, { id: "update-product" })
+        toast.success(`Item "${name}" updated successfully!`, { id: "update-product" })
         router.refresh()
       } else {
-        throw new Error("Failed to update product")
+        throw new Error("Failed to update item")
       }
     } catch (error) {
-      toast.error("Failed to update product. Please try again.", { id: "update-product" })
+      toast.error("Failed to update item. Please try again.", { id: "update-product" })
     } finally {
       setLoading(false)
     }
   }
 
   const handleDelete = async () => {
-    if (!confirm("Are you sure you want to delete this product? This action cannot be undone.")) {
+    if (!confirm("Are you sure you want to delete this item? This action cannot be undone.")) {
       return
     }
 
     setLoading(true)
-    toast.loading("Deleting product...", { id: "delete-product" })
+    toast.loading("Deleting item...", { id: "delete-product" })
 
     try {
       const response = await fetch("/products", {
@@ -69,13 +69,13 @@ export default function ProductForm({ product }: ProductFormProps) {
       })
 
       if (response.ok) {
-        toast.success(`Product "${name}" deleted successfully!`, { id: "delete-product" })
+        toast.success(`Item "${name}" deleted successfully!`, { id: "delete-product" })
         router.push("/dashboard")
       } else {
-        throw new Error("Failed to delete product")
+        throw new Error("Failed to delete item")
       }
     } catch (error) {
-      toast.error("Failed to delete product. Please try again.", { id: "delete-product" })
+      toast.error("Failed to delete Item. Please try again.", { id: "delete-product" })
     } finally {
       setLoading(false)
     }
@@ -87,7 +87,7 @@ export default function ProductForm({ product }: ProductFormProps) {
         <CardHeader className="pb-4">
           <CardTitle className="text-lg font-semibold text-card-foreground flex items-center gap-2">
             <Package className="h-5 w-5" />
-            Product Information
+            Item Information
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -95,7 +95,7 @@ export default function ProductForm({ product }: ProductFormProps) {
             <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
               <Hash className="h-4 w-4 text-muted-foreground" />
               <div>
-                <p className="text-sm font-medium text-foreground">Product ID</p>
+                <p className="text-sm font-medium text-foreground">Item ID</p>
                 <p className="text-sm text-muted-foreground">{product.id}</p>
               </div>
             </div>
@@ -127,7 +127,7 @@ export default function ProductForm({ product }: ProductFormProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label htmlFor="name" className="text-sm font-medium text-foreground">
-                Product Name
+                Item Name
               </Label>
               <Input
                 id="name"
@@ -188,12 +188,12 @@ export default function ProductForm({ product }: ProductFormProps) {
               className="bg-primary hover:bg-primary/90 text-primary-foreground flex items-center gap-2"
             >
               <Save className="h-4 w-4" />
-              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Update Product"}
+              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Update Item"}
             </Button>
 
             <Button onClick={handleDelete} disabled={loading} variant="destructive" className="flex items-center gap-2">
               <Trash2 className="h-4 w-4" />
-              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Delete Product"}
+              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Delete Item"}
             </Button>
           </div>
         </CardContent>

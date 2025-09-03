@@ -22,7 +22,7 @@ export default async function DashboardPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 sm:mb-8">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Inventory Dashboard</h1>
-          <p className="text-muted-foreground text-sm sm:text-base">Manage inventories and their products</p>
+          <p className="text-muted-foreground text-sm sm:text-base">Manage inventories and their items</p>
         </div>
         <CreateDropdown />
       </div>

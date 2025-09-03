@@ -41,7 +41,7 @@ export function InventorySelector({ inventories }: InventorySelectorProps) {
         </label>
         <Select value={selectedInventoryId} onValueChange={setSelectedInventoryId}>
           <SelectTrigger className="w-full sm:w-[300px]">
-            <SelectValue placeholder="Choose an inventory to view products" />
+            <SelectValue placeholder="Choose an inventory to view items" />
           </SelectTrigger>
           <SelectContent>
             {inventories.map((inventory) => (

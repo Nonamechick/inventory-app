@@ -37,7 +37,7 @@ export function CreateDropdown() {
                 onClick={() => setIsOpen(false)}
               >
                 <Package className="h-4 w-4" />
-                Create Product
+                Create Item
               </Link>
             </div>
           </div>
