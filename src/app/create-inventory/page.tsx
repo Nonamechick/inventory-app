@@ -1,5 +1,7 @@
 "use client"
 
+import type React from "react"
+
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 
@@ -22,30 +24,71 @@ export default function CreateInventoryPage() {
   }
 
   return (
-    <main className="container mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-4">Create Inventory</h1>
-      <form onSubmit={handleSubmit} className="space-y-4 max-w-md">
-        <input
-          type="text"
-          placeholder="Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          className="w-full p-2 border rounded"
-          required
-        />
-        <textarea
-          placeholder="Description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="w-full p-2 border rounded"
-        />
-        <button
-          type="submit"
-          className="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90"
-        >
-          Save
-        </button>
-      </form>
+    <main className="min-h-screen bg-gradient-to-br py-12 px-4">
+      <div className="container mx-auto max-w-2xl">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold  mb-2">Create New Inventory</h1>
+          <p className=" text-lg">Add a new item to your inventory system</p>
+        </div>
+
+        <div className=" rounded-2xl shadow-xl border  p-8">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-2">
+              <label htmlFor="title" className="block text-sm font-semibold ">
+                Item Title
+              </label>
+              <input
+                id="title"
+                type="text"
+                placeholder="Enter inventory item title..."
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="w-full px-4 py-3 border-2  rounded-xl  focus:ring-4  transition-all duration-200 "
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="description" className="block text-sm font-semibold ">
+                Description
+              </label>
+              <textarea
+                id="description"
+                placeholder="Describe your inventory item..."
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                rows={4}
+                className="w-full px-4 py-3 border-2 rounded-xl  focus:ring-4  transition-all duration-200  resize-none"
+              />
+            </div>
+
+            <div className="flex gap-4 pt-4">
+              <button
+                type="button"
+                onClick={() => router.back()}
+                className="flex-1 px-6 py-3 border-2  rounded-xl font-semibold  transition-all duration-200"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="flex-1 px-6 py-3  rounded-xl font-semibold  focus:ring-4  transition-all duration-200 shadow-lg hover:shadow-xl"
+              >
+                Create Inventory
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div className="mt-8 text-center">
+          <p className=" text-sm">
+            Need help? Check out our{" "}
+            <a href="#" className=" font-medium">
+              inventory guide
+            </a>
+          </p>
+        </div>
+      </div>
     </main>
   )
 }
