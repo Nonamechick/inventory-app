@@ -28,7 +28,6 @@ export default function CreateInventoryPage() {
       <div className="container mx-auto max-w-2xl">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold  mb-2">Create New Inventory</h1>
-          <p className=" text-lg">Add a new item to your inventory system</p>
         </div>
 
         <div className=" rounded-2xl shadow-xl border  p-8">
