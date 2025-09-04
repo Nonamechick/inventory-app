@@ -78,15 +78,6 @@ export default function CreateInventoryPage() {
             </div>
           </form>
         </div>
-
-        <div className="mt-8 text-center">
-          <p className=" text-sm">
-            Need help? Check out our{" "}
-            <a href="#" className=" font-medium">
-              inventory guide
-            </a>
-          </p>
-        </div>
       </div>
     </main>
   )
