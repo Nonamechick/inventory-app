@@ -31,6 +31,7 @@ export type Product = {
   customId: string
   name: string
   description: string | null
+  category: string | null
   quantity: number
   createdAt: Date
   inventoryId: number
@@ -101,6 +102,15 @@ export const columns: ColumnDef<Product>[] = [
     cell: ({ row }) => <div className="text-center">{row.getValue("quantity")}</div>,
   },
   {
+  accessorKey: "category",
+  header: "Category",
+  cell: ({ row }) => (
+    <div className="max-w-[150px] truncate">
+      {row.getValue("category") || "Uncategorized"}
+    </div>
+    ),
+  },
+  {
     accessorKey: "author",
     header: "Author",
     cell: ({ row }) => {
@@ -159,11 +169,13 @@ export function ProductsDataTable({ data }: ProductsDataTableProps) {
       const description = String(row.original.description ?? "").toLowerCase()
       const authorName = String(row.original.author?.name ?? "").toLowerCase()
       const authorEmail = String(row.original.author?.email ?? "").toLowerCase()
+      const category = String(row.original.category ?? "").toLowerCase()
 
       return (
         customId.includes(search) ||
         name.includes(search) ||
         description.includes(search) ||
+        category.includes(search) || 
         authorName.includes(search) ||
         authorEmail.includes(search)
       )
@@ -366,6 +378,10 @@ export function ProductsDataTable({ data }: ProductsDataTableProps) {
                   <div>
                     <span className="text-muted-foreground">Quantity:</span>
                     <div className="font-medium">{product.quantity}</div>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Category:</span>
+                    <div className="font-medium">{product.category || "Uncategorized"}</div>
                   </div>
                   <div>
                     <span className="text-muted-foreground">Author:</span>

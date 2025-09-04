@@ -14,6 +14,7 @@ type Inventory = {
     name: string
     description: string | null
     quantity: number
+    category: string | null 
     createdAt: Date
     inventoryId: number
     author: {

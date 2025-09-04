@@ -31,6 +31,7 @@ model Product {
   customId    String    @unique
   name        String
   description String?
+  category    String?
   quantity    Int       @default(0)
   published   Boolean   @default(false)
   authorId    Int?

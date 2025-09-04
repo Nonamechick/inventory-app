@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
   }
 
 
-  const { name, description, quantity = 0, prefix = "PR", inventoryId  } = await req.json();
+  const { name, description, quantity = 0, prefix = "PR", inventoryId, category  } = await req.json();
 
   let user = await prisma.user.findUnique({ where: { clerkId } });
   if (!user) {
@@ -72,6 +72,7 @@ const productData: Prisma.ProductCreateInput = {
   author: { connect: { id: user.id } },
   customId: generateCustomId(prefix),
   inventory: { connect: { id: inventoryId } },
+  category,
 };
 
 
@@ -91,7 +92,7 @@ export async function PUT(req: NextRequest) {
     return new Response("Forbidden: insufficient permissions", { status: 403 });
   }
 
-  const { id, name, description, quantity } = await req.json();
+  const { id, name, description, quantity, category } = await req.json();
 
   const user = await prisma.user.findUnique({ where: { clerkId } });
   if (!user) return new Response("Unauthorized", { status: 401 });
@@ -103,14 +104,14 @@ export async function PUT(req: NextRequest) {
 
   const updated = await prisma.product.updateMany({
     where: whereClause,
-    data: { name, description, quantity },
+    data: { name, description, quantity, category },
   });
 
   if (updated.count === 0) {
     return new Response("Item not found or not authorized", { status: 404 });
   }
 
-  return new Response(JSON.stringify({ id, name, description, quantity }), { status: 200 });
+  return new Response(JSON.stringify({ id, name, description, quantity, category }), { status: 200 });
 }
 
 // DELETE product

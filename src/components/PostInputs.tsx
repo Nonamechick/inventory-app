@@ -19,6 +19,8 @@ export default function PostInputs() {
   const [inventories, setInventories] = useState<{ id: number; title: string }[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [showSuccessToast, setShowSuccessToast] = useState(false)
+  const [category, setCategory] = useState("")
+
 
   useEffect(() => {
     async function fetchInventories() {
@@ -50,6 +52,7 @@ export default function PostInputs() {
           description,
           quantity: quantity === "" ? 0 : Number(quantity),
           inventoryId,
+          category,
         }),
       })
 
@@ -109,6 +112,16 @@ export default function PostInputs() {
             onChange={(e) => setDescription(e.target.value)}
             rows={4}
             required
+          />
+
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="category">Category</Label>
+          <Input
+            id="category"
+            type="text"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
           />
         </div>
 

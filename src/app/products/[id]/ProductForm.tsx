@@ -22,6 +22,7 @@ export default function ProductForm({ product }: ProductFormProps) {
   const [loading, setLoading] = useState(false)
   const [quantity, setQuantity] = useState(product.quantity.toString())
   const [customId, setCustomId] = useState(product.customId)
+  const [category, setCategory] = useState(product.category ?? "")
 
   const handleUpdate = async () => {
     setLoading(true)
@@ -37,6 +38,7 @@ export default function ProductForm({ product }: ProductFormProps) {
           description,
           quantity: quantity === "" ? 0 : Number(quantity),
           customId,
+          category,
         }),
       })
 
@@ -165,6 +167,20 @@ export default function ProductForm({ product }: ProductFormProps) {
               placeholder="0"
             />
           </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="category" className="text-sm font-medium text-foreground">
+              Category
+            </Label>
+            <Input
+              id="category"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className="bg-input border-border focus:ring-ring max-w-xs"
+              placeholder="e.g. Electronics"
+            />
+          </div>
+
 
           <div className="space-y-2">
             <Label htmlFor="description" className="text-sm font-medium text-foreground">
