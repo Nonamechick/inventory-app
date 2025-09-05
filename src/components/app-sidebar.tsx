@@ -44,7 +44,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 const items = [
   { title: "Home", url: "/", icon: Home },
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
-  { title: "Admin Panel", url: "/admin", icon: UserStar },
+  { title: "Admin Dashboard", url: "/admin", icon: UserStar },
   { title: "Inventories", url: "/inventories", icon: ListChecks  },
   // { title: "Settings", url: "/settings", icon: Settings },
 ]
