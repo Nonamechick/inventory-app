@@ -35,6 +35,7 @@ export type Product = {
   quantity: number
   createdAt: Date
   inventoryId: number
+  imageUrl?: string | null 
   author: {
     id: number
     email: string
@@ -101,6 +102,27 @@ export const columns: ColumnDef<Product>[] = [
     ),
     cell: ({ row }) => <div className="text-center">{row.getValue("quantity")}</div>,
   },
+{
+  accessorKey: "imageUrl",
+  header: "Image URL",
+  cell: ({ row }) => {
+    const url = row.getValue("imageUrl") as string | null
+    if (!url) return <span className="text-muted-foreground">No URL</span>
+    const shortUrl = url.length > 30 ? url.slice(0, 30) + "…" : url
+
+    return (
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="hover:underline"
+        title={url}
+      >
+        {shortUrl}
+      </a>
+    )
+  },
+},
   {
   accessorKey: "category",
   header: "Category",
@@ -382,6 +404,24 @@ export function ProductsDataTable({ data }: ProductsDataTableProps) {
                   <div>
                     <span className="text-muted-foreground">Category:</span>
                     <div className="font-medium">{product.category || "Uncategorized"}</div>
+                  </div>
+                  <div className="col-span-2">
+                    <span className="text-muted-foreground">Image URL:</span>
+                    {product.imageUrl ? (
+                      <a
+                        href={product.imageUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-medium hover:underline break-all"
+                        title={product.imageUrl} 
+                      >
+                        {product.imageUrl.length > 30
+                          ? product.imageUrl.slice(0, 30) + "…"
+                          : product.imageUrl}
+                      </a>
+                    ) : (
+                      <div className="font-medium text-muted-foreground">No URL</div>
+                    )}
                   </div>
                   <div>
                     <span className="text-muted-foreground">Author:</span>

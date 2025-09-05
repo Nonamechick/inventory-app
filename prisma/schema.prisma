@@ -39,4 +39,5 @@ model Product {
   inventoryId Int
   inventory   Inventory @relation(fields: [inventoryId], references: [id])
   createdAt   DateTime  @default(now())
+  imageUrl    String?
 }

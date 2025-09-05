@@ -69,7 +69,7 @@ export default function InventoriesPage() {
             <h3 className="text-lg font-semibold text-foreground mb-2">No inventories found</h3>
             <p className="text-muted-foreground mb-6">Get started by creating your first inventory collection</p>
             <Link
-              href="/inventory/create"
+              href="/create-inventory"
               className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90 transition-colors"
             >
               <Plus className="h-4 w-4" />
