@@ -1,36 +1,100 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Inventory App
+
+A modern inventory management application built with Next.js, React, Prisma, Clerk, Supabase, Radix UI, and Tailwind CSS.
+
+Live demo: [inventory-app-blue.vercel.app](https://inventory-app-blue.vercel.app)
+
+## Features
+
+- User authentication and management via Clerk
+- Inventory data stored and managed using Prisma ORM
+- UI components powered by Radix UI
+- Real-time analytics and cloud functions via Supabase and Vercel
+- Responsive design with Tailwind CSS
+- Table management with TanStack React Table
+- Theming support via next-themes
+- Avatar, Checkbox, Dialog, Dropdown, Navigation, Select, Separator, Slot, Tooltip components from Radix UI
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 20+
+- npm
+
+### Installation
+
+Clone the repository and install dependencies:
+
+```bash
+git clone https://github.com/Nonamechick/inventory-app.git
+cd inventory-app
+npm install
+```
+
+### Environment Variables
+
+You may need to set up environment variables for Clerk, Supabase, and your database connection. See `.env.example` (if available) or check integration docs for:
+
+- Clerk API keys
+- Supabase project URL and API key
+- Database URL (for Prisma)
+
+### Database Setup
+
+Generate Prisma client and migrate your database:
+
+```bash
+npx prisma generate
+npx prisma migrate dev
+```
+
+### Development
+
+Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Production Build
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Build and start:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm start
+```
 
-## Learn More
+For Vercel deploys, a special script runs Prisma generate before building:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run vercel-build
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Linting
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npm run lint
+```
 
-## Deploy on Vercel
+## Scripts
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `dev`: Run Next.js development server with Turbopack
+- `build`: Build Next.js app with Turbopack
+- `start`: Start Next.js production server
+- `lint`: Run ESLint
+- `vercel-build`: Prisma generate + Next.js build for Vercel
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Tech Stack
+
+- **Next.js** (15.5)
+- **React** (19.1)
+- **Prisma** (ORM)
+- **Clerk** (auth)
+- **Supabase** (cloud functions/DB)
+- **Radix UI** (UI components)
+- **Tailwind CSS** (styling)
+- **TanStack Table** (tables)
+- **Lucide React** (icons)
+- **Sonner** (notifications)
